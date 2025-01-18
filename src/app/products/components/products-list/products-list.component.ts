@@ -1,4 +1,5 @@
 import { Component , inject ,OnInit, signal, ViewChild, WritableSignal} from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductService } from '../../../service/product.service';
 import { Product } from '../../interfaces/products';
 import {MatButtonModule} from '@angular/material/button';
@@ -13,7 +14,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './products-list.component.css'
 })
 export class ProductsListComponent implements OnInit {
-
+  private router = inject(Router);
   private productService = inject(ProductService);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -53,6 +54,8 @@ export class ProductsListComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
   navigateToForm(id?:number){
+    const path = id ? `/products/edit/${id}` : '/products/new';
+    this.router.navigate([path])
 
   }
 
