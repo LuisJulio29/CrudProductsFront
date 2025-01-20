@@ -6,6 +6,8 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from '../dialog/dialog.component';
 
 @Component({ 
   selector: 'app-products-list',
@@ -14,6 +16,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './products-list.component.css'
 })
 export class ProductsListComponent implements OnInit {
+  private dialog = inject(MatDialog);
   private router = inject(Router);
   private productService = inject(ProductService);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -59,7 +62,16 @@ export class ProductsListComponent implements OnInit {
 
   }
 
-  deleteProduct(id?:number){
-
+  deleteProduct(id:number){
+    const dialogRef = this.dialog.open(DialogComponent);
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result){
+        this.productService.deleteProduct(id).subscribe(()=>{
+          const updateProducts = this.products().filter((product) => product.id !== id);
+          this.products.set(updateProducts);
+          this.updateTable();
+        })
+      }
+    })
   }
 }
